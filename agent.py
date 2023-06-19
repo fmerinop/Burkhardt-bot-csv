@@ -1,16 +1,27 @@
+import os
+import openai
 from langchain import OpenAI
+from dotenv import load_dotenv
+from langchain.chat_models import AzureChatOpenAI
 from langchain.agents import create_pandas_dataframe_agent
 import pandas as pd
 
 # Setting up the api key
-import environ
+#import environ
 
-env = environ.Env()
-environ.Env.read_env()
+#env = environ.Env()
+#environ.Env.read_env()
 
-API_KEY = env("apikey")
+#API_KEY = env("apikey")
 
+# Load environment variables (set OPENAI_API_KEY and OPENAI_API_BASE in .env)
+load_dotenv()
 
+openai.api_type = "azure"
+openai.api_base = os.getenv('OPENAI_API_BASE')
+openai.api_version = "2023-03-15-preview"
+openai.api_key = os.getenv("OPENAI_API_KEY")
+API_KEY = openai.api_key
 def create_agent(filename: str):
     """
     Create an agent that can access and use a large language model (LLM).
@@ -23,10 +34,10 @@ def create_agent(filename: str):
     """
 
     # Create an OpenAI object.
-    llm = OpenAI(openai_api_key=API_KEY)
-
+    # llm = OpenAI(openai_api_key=API_KEY)
+    llm = AzureChatOpenAI(deployment_name="gpt-4-scus",  model_name="gpt-4", openai_api_version="2023-03-15-preview")
     # Read the CSV file into a Pandas DataFrame.
-    df = pd.read_csv(filename)
+    df = pd.read_csv(filename, sep=';')
 
     # Create a Pandas DataFrame agent.
     return create_pandas_dataframe_agent(llm, df, verbose=False)

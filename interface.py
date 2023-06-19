@@ -53,7 +53,7 @@ def write_response(response_dict: dict):
         st.table(df)
 
 
-st.title("👨‍💻 Chat with your CSV")
+st.title("👨‍💻 Chat with your Data")
 
 st.write("Please upload your CSV file below.")
 
